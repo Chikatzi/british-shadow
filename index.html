@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>British Shadow v1.1 — 5 Minute Practice</title>
+<style>
+:root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#18202a;background:#f5f3ee}
+*{box-sizing:border-box} body{margin:0}.wrap{max-width:760px;margin:auto;padding:20px}
+h1{font-size:27px;margin:8px 0 2px}.sub{color:#68707b;margin:0 0 18px}
+.card{background:#fff;border-radius:18px;padding:16px;margin:12px 0;box-shadow:0 3px 18px #0000000d}
+label{font-size:13px;font-weight:700;display:block;margin:8px 0}
+input,textarea,button{font:inherit} input[type=file],textarea{width:100%}
+textarea{min-height:90px;border:1px solid #d9dde2;border-radius:12px;padding:10px}
+button{border:0;border-radius:12px;padding:11px 14px;background:#1f3549;color:white;font-weight:700;margin:4px 4px 4px 0}
+button.secondary{background:#e9edf1;color:#243442} button:disabled{opacity:.45}
+audio{width:100%;margin:8px 0}
+.words{line-height:2.15}.word{display:inline-block;padding:1px 5px;margin:1px;border-radius:7px;background:#f0f2f4;cursor:pointer}
+.word:hover,.word.active{background:#dce7ef}
+.small{font-size:12px;color:#737b85}.row{display:flex;gap:8px;flex-wrap:wrap}.pill{background:#edf2f5;border-radius:999px;padding:6px 10px;font-size:12px}
+#timer{font-variant-numeric:tabular-nums;font-size:30px;font-weight:800}
+.status{font-weight:700}
+</style>
+</head>
+<body><div class="wrap">
+<h1>British Shadow 🇬🇧 <span class="small">v1.1</span></h1>
+<p class="sub">One model. One difference. Five minutes.</p>
+
+<div class="card">
+ <div class="row"><span class="pill">① Listen</span><span class="pill">② Tap a word</span><span class="pill">③ Record</span><span class="pill">④ Compare</span></div>
+ <label>Model video / audio (use media you have permission to use)</label>
+ <input id="audioFile" type="file" accept="video/*,audio/*,.mp4,.mov,.m4v,.webm,.mp3,.m4a,.wav">
+ <video id="modelVideo" controls playsinline style="width:100%;max-height:360px;border-radius:14px;background:#111;display:none"></video>
+ <audio id="model" controls style="display:none"></audio>
+ <label>Transcript</label>
+ <textarea id="transcript" placeholder="Paste the exact transcript here…"></textarea>
+ <button id="build">Build practice</button>
+</div>
+
+<div class="card">
+ <div class="row" style="justify-content:space-between;align-items:center"><b>Transcript</b><span id="timer">05:00</span></div>
+ <p class="small">First play the model once. Then use “Mark word timing”: tap Start at the beginning of a word and End at its end. Once marked, tapping that word replays only that part.</p>
+ <div id="words" class="words">Your transcript will appear here.</div>
+ <div class="row">
+  <button id="markStart" class="secondary">Mark word start</button>
+  <button id="markEnd" class="secondary">Mark word end</button>
+  <button id="playWord">Play selected word</button>
+ </div>
+ <div id="timing" class="small">Select a word to set its timing.</div>
+</div>
+
+<div class="card">
+ <b>Record & compare</b>
+ <p class="small">Record your version, then alternate between the model and your recording.</p>
+ <div class="row">
+  <button id="record">● Record</button><button id="stop" class="secondary" disabled>Stop</button>
+ </div>
+ <audio id="mine" controls></audio>
+ <div class="row">
+  <button id="playModel">▶ Model</button><button id="playMine">▶ Me</button>
+ </div>
+</div>
+
+<div class="card">
+ <b>Today's one thing</b>
+ <p class="small">Automatic British-speaker comparison comes in Version 2. For now, write just one difference you hear.</p>
+ <textarea id="note" placeholder="e.g. My ending is flatter than the model."></textarea>
+ <button id="done">Done for today ✓</button>
+ <div id="status" class="status"></div>
+</div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const audioModel=$('model'), videoModel=$('modelVideo'), wordsEl=$('words'); let model=audioModel;
+let wordData=[], selected=-1, rec, chunks=[], stopAt=null;
+
+$('audioFile').onchange=e=>{
+ const f=e.target.files[0]; if(!f)return;
+ const url=URL.createObjectURL(f);
+ const isVideo=f.type.startsWith('video/') || /\.(mp4|mov|m4v|webm)$/i.test(f.name);
+ audioModel.pause(); videoModel.pause();
+ audioModel.removeAttribute('src'); videoModel.removeAttribute('src');
+ if(isVideo){
+   model=videoModel; videoModel.src=url; videoModel.style.display='block'; audioModel.style.display='none';
+ }else{
+   model=audioModel; audioModel.src=url; audioModel.style.display='block'; videoModel.style.display='none';
+ }
+ model.load();
+};
+$('build').onclick=()=>{
+ const tokens=$('transcript').value.trim().split(/\s+/).filter(Boolean);
+ wordData=tokens.map(t=>({text:t,start:null,end:null}));
+ render();
+};
+function render(){
+ wordsEl.innerHTML='';
+ wordData.forEach((w,i)=>{
+  const s=document.createElement('span'); s.className='word'+(i===selected?' active':'');
+  s.textContent=w.text; s.onclick=()=>{selected=i;render();showTiming();};
+  wordsEl.appendChild(s); wordsEl.append(' ');
+ });
+}
+function showTiming(){
+ if(selected<0)return;
+ const w=wordData[selected];
+ $('timing').textContent=`${w.text}: ${w.start==null?'—':w.start.toFixed(2)+'s'} → ${w.end==null?'—':w.end.toFixed(2)+'s'}`;
+}
+$('markStart').onclick=()=>{if(selected>=0){wordData[selected].start=model.currentTime;showTiming()}};
+$('markEnd').onclick=()=>{if(selected>=0){wordData[selected].end=model.currentTime;showTiming()}};
+function playRange(start,end){
+ if(start==null||end==null)return;
+ stopAt=end; model.currentTime=start; model.play();
+}
+function timeGuard(){if(stopAt!=null && model.currentTime>=stopAt){model.pause();stopAt=null}}
+audioModel.ontimeupdate=timeGuard; videoModel.ontimeupdate=timeGuard;
+$('playWord').onclick=()=>{if(selected>=0){let w=wordData[selected];playRange(w.start,w.end)}};
+
+$('record').onclick=async()=>{
+ try{
+  const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+  chunks=[]; rec=new MediaRecorder(stream);
+  rec.ondataavailable=e=>chunks.push(e.data);
+  rec.onstop=()=>{
+   $('mine').src=URL.createObjectURL(new Blob(chunks,{type:rec.mimeType}));
+   stream.getTracks().forEach(t=>t.stop());
+  };
+  rec.start(); $('record').disabled=true; $('stop').disabled=false;
+ }catch(e){alert('Microphone permission is needed to record.');}
+};
+$('stop').onclick=()=>{if(rec){rec.stop();$('record').disabled=false;$('stop').disabled=true}};
+$('playModel').onclick=()=>{model.currentTime=0;model.play()};
+$('playMine').onclick=()=>{$('mine').currentTime=0;$('mine').play()};
+
+let remaining=300, timerId=null;
+function startTimer(){
+ if(timerId)return;
+ timerId=setInterval(()=>{remaining=Math.max(0,remaining-1);
+  let m=String(Math.floor(remaining/60)).padStart(2,'0'),s=String(remaining%60).padStart(2,'0');
+  $('timer').textContent=`${m}:${s}`; if(!remaining)clearInterval(timerId);
+ },1000);
+}
+document.body.addEventListener('click',startTimer,{once:true});
+$('done').onclick=()=>{$('status').textContent='✓ Finished. One focused practice is enough for today.'};
+</script>
+</body></html>
