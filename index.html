@@ -1,145 +1,110 @@
 <!doctype html>
-<html lang="en">
+<html lang="ja">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>British Shadow v1.1 — 5 Minute Practice</title>
-<style>
-:root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#18202a;background:#f5f3ee}
-*{box-sizing:border-box} body{margin:0}.wrap{max-width:760px;margin:auto;padding:20px}
-h1{font-size:27px;margin:8px 0 2px}.sub{color:#68707b;margin:0 0 18px}
-.card{background:#fff;border-radius:18px;padding:16px;margin:12px 0;box-shadow:0 3px 18px #0000000d}
-label{font-size:13px;font-weight:700;display:block;margin:8px 0}
-input,textarea,button{font:inherit} input[type=file],textarea{width:100%}
-textarea{min-height:90px;border:1px solid #d9dde2;border-radius:12px;padding:10px}
-button{border:0;border-radius:12px;padding:11px 14px;background:#1f3549;color:white;font-weight:700;margin:4px 4px 4px 0}
-button.secondary{background:#e9edf1;color:#243442} button:disabled{opacity:.45}
-audio{width:100%;margin:8px 0}
-.words{line-height:2.15}.word{display:inline-block;padding:1px 5px;margin:1px;border-radius:7px;background:#f0f2f4;cursor:pointer}
-.word:hover,.word.active{background:#dce7ef}
-.small{font-size:12px;color:#737b85}.row{display:flex;gap:8px;flex-wrap:wrap}.pill{background:#edf2f5;border-radius:999px;padding:6px 10px;font-size:12px}
-#timer{font-variant-numeric:tabular-nums;font-size:30px;font-weight:800}
-.status{font-weight:700}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10263a">
+  <title>British Shadow v1.2</title>
+  <style>
+    :root{font-family:system-ui,-apple-system,"Helvetica Neue",sans-serif;color:#173044;background:#f4f7f8}*{box-sizing:border-box}body{margin:0}header{background:#10263a;color:white;padding:25px max(18px,calc((100vw - 1100px)/2))}header h1{margin:0;font-size:1.7rem}header p{margin:5px 0 0;color:#b8d6e1}main{max-width:1100px;margin:22px auto;padding:0 16px 50px;display:grid;gap:18px}.card{background:white;border:1px solid #d9e3e8;border-radius:16px;padding:20px;box-shadow:0 4px 16px #10263a0b}h2{font-size:1.15rem;margin:0 0 15px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.row{display:flex;flex-wrap:wrap;gap:9px;align-items:center}.field{display:grid;gap:6px;font-weight:650;font-size:.9rem}input[type=file],textarea,select,input[type=number]{font:inherit;border:1px solid #becdd5;border-radius:9px;padding:9px;background:white;max-width:100%}textarea{width:100%;min-height:115px;resize:vertical}button{font:inherit;font-weight:650;border:1px solid #bed0d9;background:#f8fbfc;color:#173044;border-radius:9px;padding:9px 13px;cursor:pointer}button:hover:not(:disabled){background:#e8f4f7}button:disabled{opacity:.45;cursor:not-allowed}.primary{background:#087f86;color:white;border-color:#087f86}.primary:hover:not(:disabled){background:#05676d}.danger{color:#a12e35}.muted{color:#5b707d;font-size:.9rem}.status{min-height:1.4em;color:#27636b}.status.error{color:#a12e35}.viewer{width:100%;max-height:440px;background:#071621;border-radius:10px}.sentence-list{display:grid;gap:7px;max-height:320px;overflow:auto;margin-top:12px}.sentence-item{width:100%;text-align:left;font-weight:450}.sentence-item.active{border-color:#087f86;background:#e4f5f2}.sentence-item small{display:block;color:#607885}.practice-text{font-size:1.35rem;line-height:1.8;min-height:80px}.word{display:inline;border:0;padding:2px 3px;margin:0 1px;background:transparent;color:#173044;font:inherit;font-weight:500;border-radius:4px;text-decoration:underline dotted #8ca6b0;text-underline-offset:5px}.word.mapped{text-decoration-color:#087f86;cursor:pointer}.word:hover{background:#e4f5f2}.badge{display:inline-block;border-radius:99px;background:#e8f1f4;padding:4px 9px;font-size:.8rem;font-weight:700}.repeat-on{background:#d3f2e9;border-color:#087f86}.timing{display:grid;gap:9px;padding:13px;background:#f6f9fa;border-radius:10px}.timing .row>*{flex:0 0 auto}.timing input[type=number]{width:100px}.compare{display:grid;grid-template-columns:1fr 1fr;gap:12px}.compare>div{border:1px solid #d9e3e8;border-radius:12px;padding:14px}.compare h3{margin:0 0 10px}.small{font-size:.82rem}.hidden{display:none!important}@media(max-width:700px){.grid,.compare{grid-template-columns:1fr}.card{padding:16px}header{padding:20px 16px}}
+  </style>
 </head>
-<body><div class="wrap">
-<h1>British Shadow 🇬🇧 <span class="small">v1.1</span></h1>
-<p class="sub">One model. One difference. Five minutes.</p>
-
-<div class="card">
- <div class="row"><span class="pill">① Listen</span><span class="pill">② Tap a word</span><span class="pill">③ Record</span><span class="pill">④ Compare</span></div>
- <label>Model video / audio (use media you have permission to use)</label>
- <input id="audioFile" type="file" accept="video/*,audio/*,.mp4,.mov,.m4v,.webm,.mp3,.m4a,.wav">
- <video id="modelVideo" controls playsinline style="width:100%;max-height:360px;border-radius:14px;background:#111;display:none"></video>
- <audio id="model" controls style="display:none"></audio>
- <label>Transcript</label>
- <textarea id="transcript" placeholder="Paste the exact transcript here…"></textarea>
- <button id="build">Build practice</button>
-</div>
-
-<div class="card">
- <div class="row" style="justify-content:space-between;align-items:center"><b>Transcript</b><span id="timer">05:00</span></div>
- <p class="small">First play the model once. Then use “Mark word timing”: tap Start at the beginning of a word and End at its end. Once marked, tapping that word replays only that part.</p>
- <div id="words" class="words">Your transcript will appear here.</div>
- <div class="row">
-  <button id="markStart" class="secondary">Mark word start</button>
-  <button id="markEnd" class="secondary">Mark word end</button>
-  <button id="playWord">Play selected word</button>
- </div>
- <div id="timing" class="small">Select a word to set its timing.</div>
-</div>
-
-<div class="card">
- <b>Record & compare</b>
- <p class="small">Record your version, then alternate between the model and your recording.</p>
- <div class="row">
-  <button id="record">● Record</button><button id="stop" class="secondary" disabled>Stop</button>
- </div>
- <audio id="mine" controls></audio>
- <div class="row">
-  <button id="playModel">▶ Model</button><button id="playMine">▶ Me</button>
- </div>
-</div>
-
-<div class="card">
- <b>Today's one thing</b>
- <p class="small">Automatic British-speaker comparison comes in Version 2. For now, write just one difference you hear.</p>
- <textarea id="note" placeholder="e.g. My ending is flatter than the model."></textarea>
- <button id="done">Done for today ✓</button>
- <div id="status" class="status"></div>
-</div>
-</div>
+<body>
+<header><h1>British Shadow <span class="small">v1.2</span></h1><p>一文ずつ聞いて、声に出して、比べる。</p></header>
+<main>
+  <section class="card" aria-labelledby="sourceTitle">
+    <h2 id="sourceTitle">1. お手本とTranscript</h2>
+    <div class="grid"><label class="field">動画・音声ファイル<input id="mediaFile" type="file" accept="video/*,audio/*"></label><label class="field">時刻データの読込<input id="timingFile" type="file" accept="application/json,.json"></label></div>
+    <p class="muted">ファイルは端末内で再生します。ページを再読み込みすると動画・音声と録音は消えます。</p>
+    <video id="media" class="viewer" controls playsinline preload="metadata"></video>
+    <label class="field" for="transcript">Transcript</label><textarea id="transcript" placeholder="話している英文を貼り付けます。改行または . ! ? で文に分けます。"></textarea>
+    <div class="row"><button id="build" class="primary">文を作る</button><button id="exportTiming" disabled>時刻データを保存</button><span id="sourceStatus" class="status" role="status"></span></div>
+  </section>
+  <section class="card" aria-labelledby="practiceTitle">
+    <h2 id="practiceTitle">2. Sentence practice</h2>
+    <div class="row"><span id="counter" class="badge">0 / 0</span><span id="timingState" class="muted">Transcriptを入れてください</span></div>
+    <div id="currentText" class="practice-text" aria-live="polite"></div>
+    <div class="row"><button id="prev" disabled>← Previous</button><button id="playSentence" class="primary" disabled>▶ Sentence</button><button id="stop" disabled>■ Stop</button><button id="next" disabled>Next →</button></div>
+    <div class="row" style="margin-top:12px"><button id="repeat" aria-pressed="false" disabled>🔁 Repeat OFF</button><label class="field" for="gap">間隔<select id="gap"><option value="0">0秒</option><option value="1">1秒</option><option value="2" selected>2秒</option><option value="3">3秒</option></select></label></div>
+    <p class="muted">下の文を選択できます。単語をタップすると、登録済みの時刻だけ再生します。</p><div id="sentenceList" class="sentence-list"></div>
+  </section>
+  <section class="card" aria-labelledby="timingTitle">
+    <h2 id="timingTitle">3. 音声の位置を登録</h2>
+    <p class="muted">自動アラインメントはまだありません。動画を目的の位置に動かし、開始・終了を登録してください。文を登録するとその文だけ再生できます。単語も同じ方法で登録します。</p>
+    <div class="timing"><div class="row"><strong>現在の文</strong><button id="sentenceStart" disabled>現在位置を文の開始に</button><button id="sentenceEnd" disabled>現在位置を文の終了に</button><span id="sentenceRange" class="muted">未設定</span></div>
+    <div class="row"><strong>単語</strong><select id="wordSelect" aria-label="単語を選択"></select><button id="wordStart" disabled>現在位置を単語の開始に</button><button id="wordEnd" disabled>現在位置を単語の終了に</button><span id="wordRange" class="muted">未設定</span></div></div>
+  </section>
+  <section class="card" aria-labelledby="compareTitle">
+    <h2 id="compareTitle">4. Model / Me</h2>
+    <p class="muted">選択中の文のお手本と、自分の録音を聞き比べられます。自動採点はありません。録音にはHTTPSの公開ページとマイクの許可が必要です。</p>
+    <div class="row"><button id="record" disabled>● 録音開始</button><button id="recordStop" disabled>■ 録音停止</button><span id="recordStatus" class="status" role="status"></span></div>
+    <div class="compare" style="margin-top:14px"><div><h3>Model</h3><button id="modelPlay" disabled>▶ お手本を聞く</button></div><div><h3>Me</h3><audio id="myAudio" controls style="width:100%"></audio><a id="downloadRecording" class="hidden" download="british-shadow-recording.webm">録音を保存</a></div></div>
+  </section>
+</main>
 <script>
-const $=id=>document.getElementById(id);
-const audioModel=$('model'), videoModel=$('modelVideo'), wordsEl=$('words'); let model=audioModel;
-let wordData=[], selected=-1, rec, chunks=[], stopAt=null;
-
-$('audioFile').onchange=e=>{
- const f=e.target.files[0]; if(!f)return;
- const url=URL.createObjectURL(f);
- const isVideo=f.type.startsWith('video/') || /\.(mp4|mov|m4v|webm)$/i.test(f.name);
- audioModel.pause(); videoModel.pause();
- audioModel.removeAttribute('src'); videoModel.removeAttribute('src');
- if(isVideo){
-   model=videoModel; videoModel.src=url; videoModel.style.display='block'; audioModel.style.display='none';
- }else{
-   model=audioModel; audioModel.src=url; audioModel.style.display='block'; videoModel.style.display='none';
- }
- model.load();
-};
-$('build').onclick=()=>{
- const tokens=$('transcript').value.trim().split(/\s+/).filter(Boolean);
- wordData=tokens.map(t=>({text:t,start:null,end:null}));
- render();
-};
-function render(){
- wordsEl.innerHTML='';
- wordData.forEach((w,i)=>{
-  const s=document.createElement('span'); s.className='word'+(i===selected?' active':'');
-  s.textContent=w.text; s.onclick=()=>{selected=i;render();showTiming();};
-  wordsEl.appendChild(s); wordsEl.append(' ');
- });
-}
-function showTiming(){
- if(selected<0)return;
- const w=wordData[selected];
- $('timing').textContent=`${w.text}: ${w.start==null?'—':w.start.toFixed(2)+'s'} → ${w.end==null?'—':w.end.toFixed(2)+'s'}`;
-}
-$('markStart').onclick=()=>{if(selected>=0){wordData[selected].start=model.currentTime;showTiming()}};
-$('markEnd').onclick=()=>{if(selected>=0){wordData[selected].end=model.currentTime;showTiming()}};
-function playRange(start,end){
- if(start==null||end==null)return;
- stopAt=end; model.currentTime=start; model.play();
-}
-function timeGuard(){if(stopAt!=null && model.currentTime>=stopAt){model.pause();stopAt=null}}
-audioModel.ontimeupdate=timeGuard; videoModel.ontimeupdate=timeGuard;
-$('playWord').onclick=()=>{if(selected>=0){let w=wordData[selected];playRange(w.start,w.end)}};
-
-$('record').onclick=async()=>{
- try{
-  const stream=await navigator.mediaDevices.getUserMedia({audio:true});
-  chunks=[]; rec=new MediaRecorder(stream);
-  rec.ondataavailable=e=>chunks.push(e.data);
-  rec.onstop=()=>{
-   $('mine').src=URL.createObjectURL(new Blob(chunks,{type:rec.mimeType}));
-   stream.getTracks().forEach(t=>t.stop());
-  };
-  rec.start(); $('record').disabled=true; $('stop').disabled=false;
- }catch(e){alert('Microphone permission is needed to record.');}
-};
-$('stop').onclick=()=>{if(rec){rec.stop();$('record').disabled=false;$('stop').disabled=true}};
-$('playModel').onclick=()=>{model.currentTime=0;model.play()};
-$('playMine').onclick=()=>{$('mine').currentTime=0;$('mine').play()};
-
-let remaining=300, timerId=null;
-function startTimer(){
- if(timerId)return;
- timerId=setInterval(()=>{remaining=Math.max(0,remaining-1);
-  let m=String(Math.floor(remaining/60)).padStart(2,'0'),s=String(remaining%60).padStart(2,'0');
-  $('timer').textContent=`${m}:${s}`; if(!remaining)clearInterval(timerId);
- },1000);
-}
-document.body.addEventListener('click',startTimer,{once:true});
-$('done').onclick=()=>{$('status').textContent='✓ Finished. One focused practice is enough for today.'};
+(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const media = $('media');
+  const state = {sentences:[],index:0,wordIndex:0,repeat:false,segment:null,repeatTimer:null,objectUrl:null,recordingUrl:null,recorder:null,stream:null,chunks:[],recordings:new Map(),generation:0};
+  const time = n => Number.isFinite(n) ? `${n.toFixed(2)}s` : '—';
+  const valid = r => r && Number.isFinite(r.start) && Number.isFinite(r.end) && r.start >= 0 && r.end > r.start;
+  const current = () => state.sentences[state.index];
+  const selectedWord = () => current()?.words[state.wordIndex];
+  function status(id,message,error=false){const el=$(id);el.textContent=message;el.classList.toggle('error',error)}
+  function parseSentences(raw){
+    const chunks=raw.replace(/\r/g,'').split(/(?<=[.!?。！？])\s+|\n+/u).map(s=>s.trim()).filter(Boolean);
+    return chunks.map(text=>({text,start:null,end:null,words:Array.from(text.matchAll(/\S+/gu),m=>({text:m[0],start:null,end:null}))}));
+  }
+  function stopSegment(pause=true){state.generation++;clearTimeout(state.repeatTimer);state.repeatTimer=null;state.segment=null;if(pause)media.pause();renderControls()}
+  function playRange(range,kind){
+    if(!valid(range)){status('sourceStatus','この範囲の時刻を登録してください。',true);return}
+    if(!media.src){status('sourceStatus','お手本ファイルを選んでください。',true);return}
+    stopSegment();
+    const generation=state.generation;
+    state.segment={start:range.start,end:range.end,kind,generation};
+    try{media.currentTime=range.start;const result=media.play();if(result?.catch)result.catch(()=>{if(state.generation===generation){stopSegment();status('sourceStatus','再生を開始できませんでした。再生ボタンを押してからお試しください。',true)}})}catch(e){stopSegment();status('sourceStatus','再生を開始できませんでした。',true)}
+    renderControls();
+  }
+  function checkSegment(){const s=state.segment;if(!s)return;if(media.currentTime+0.035<s.end&&!media.ended)return;media.pause();state.segment=null;renderControls();if(state.repeat&&s.generation===state.generation){const index=state.index;state.repeatTimer=setTimeout(()=>{state.repeatTimer=null;if(state.repeat&&state.index===index&&s.generation===state.generation)playRange(current(),'sentence')},Number($('gap').value)*1000)}}
+  media.addEventListener('timeupdate',checkSegment);media.addEventListener('seeked',checkSegment);media.addEventListener('ended',()=>{if(state.segment)checkSegment()});
+  function renderControls(){
+    const s=current(),w=selectedWord(),has=!!s;
+    $('counter').textContent=has?`${state.index+1} / ${state.sentences.length}`:'0 / 0';
+    $('timingState').textContent=!has?'Transcriptを入れてください':valid(s)?`文 ${time(s.start)} – ${time(s.end)} を再生できます`:'文の開始・終了時刻は未設定';
+    $('prev').disabled=!has||state.index===0;$('next').disabled=!has||state.index===state.sentences.length-1;
+    $('playSentence').disabled=!has||!valid(s)||!media.src;$('stop').disabled=!state.segment&&!state.repeatTimer;
+    $('repeat').disabled=!has;$('repeat').textContent=state.repeat?'🔁 Repeat ON':'🔁 Repeat OFF';$('repeat').classList.toggle('repeat-on',state.repeat);$('repeat').setAttribute('aria-pressed',String(state.repeat));
+    $('sentenceStart').disabled=!has||!media.src;$('sentenceEnd').disabled=!has||!media.src;
+    $('wordStart').disabled=!w||!media.src;$('wordEnd').disabled=!w||!media.src;
+    $('sentenceRange').textContent=s?`${time(s.start)} – ${time(s.end)}`:'未設定';$('wordRange').textContent=w?`${time(w.start)} – ${time(w.end)}`:'未設定';
+    $('exportTiming').disabled=!has;$('record').disabled=!has||!!state.recorder;$('recordStop').disabled=!state.recorder;
+    $('modelPlay').disabled=!has||!valid(s)||!media.src;
+  }
+  function renderSentence(){
+    const s=current();$('currentText').replaceChildren();$('wordSelect').replaceChildren();
+    if(s){s.words.forEach((w,i)=>{const b=document.createElement('button');b.className='word'+(valid(w)?' mapped':'');b.textContent=w.text;b.title=valid(w)?'この単語を再生':'時刻未設定。下で時刻を登録';b.addEventListener('click',()=>{state.wordIndex=i;renderControls();if(valid(w))playRange(w,'word');else status('sourceStatus',`「${w.text}」の時刻は未設定です。下で開始・終了を登録してください。`,true)});$('currentText').append(b,document.createTextNode(' '));const option=new Option(w.text, String(i));$('wordSelect').add(option)});$('wordSelect').value=String(Math.min(state.wordIndex,s.words.length-1))}
+    $('sentenceList').replaceChildren();state.sentences.forEach((item,i)=>{const b=document.createElement('button');b.className='sentence-item'+(i===state.index?' active':'');b.textContent=`${i+1}. ${item.text}`;const small=document.createElement('small');small.textContent=valid(item)?`${time(item.start)} – ${time(item.end)}`:'時刻未設定';b.append(small);b.addEventListener('click',()=>selectSentence(i));$('sentenceList').append(b)});
+    renderRecording();renderControls();
+  }
+  function selectSentence(i){if(i<0||i>=state.sentences.length)return;stopSegment();if(state.recorder)stopRecording();state.index=i;state.wordIndex=0;renderSentence()}
+  function renderRecording(){const r=state.recordings.get(state.index);$('myAudio').src=r?.url||'';$('downloadRecording').classList.toggle('hidden',!r);if(r){$('downloadRecording').href=r.url;$('downloadRecording').download=`british-shadow-sentence-${state.index+1}.${r.ext}`}}
+  $('mediaFile').addEventListener('change',e=>{stopSegment();if(state.objectUrl)URL.revokeObjectURL(state.objectUrl);const file=e.target.files[0];state.objectUrl=file?URL.createObjectURL(file):null;media.src=state.objectUrl||'';media.load();status('sourceStatus',file?`${file.name} を読み込みました。`:'');renderControls()});
+  $('build').addEventListener('click',()=>{const text=$('transcript').value.trim();if(!text){status('sourceStatus','Transcriptを入力してください。',true);return}stopSegment();state.sentences=parseSentences(text);state.index=0;state.wordIndex=0;state.recordings.forEach(r=>URL.revokeObjectURL(r.url));state.recordings.clear();renderSentence();status('sourceStatus',`${state.sentences.length}文を作りました。時刻は自動設定されません。`)});
+  $('prev').onclick=()=>selectSentence(state.index-1);$('next').onclick=()=>selectSentence(state.index+1);
+  $('playSentence').onclick=()=>playRange(current(),'sentence');$('modelPlay').onclick=()=>playRange(current(),'sentence');$('stop').onclick=()=>stopSegment();
+  $('repeat').onclick=()=>{state.repeat=!state.repeat;if(!state.repeat&&state.repeatTimer)stopSegment();renderControls()};
+  $('wordSelect').onchange=()=>{state.wordIndex=Number($('wordSelect').value);renderControls()};
+  function mark(target,key){const t=media.currentTime;if(!Number.isFinite(t))return;target[key]=t;stopSegment();renderSentence();status('sourceStatus',`${key==='start'?'開始':'終了'}を ${time(t)} に登録しました。`)}
+  $('sentenceStart').onclick=()=>mark(current(),'start');$('sentenceEnd').onclick=()=>mark(current(),'end');$('wordStart').onclick=()=>mark(selectedWord(),'start');$('wordEnd').onclick=()=>mark(selectedWord(),'end');
+  $('exportTiming').onclick=()=>{const payload={schema:'british-shadow-timing',version:1,transcript:$('transcript').value,sentences:state.sentences.map(s=>({text:s.text,start:s.start,end:s.end,words:s.words.map(w=>({text:w.text,start:w.start,end:w.end}))}))};const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='british-shadow-timing.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)};
+  $('timingFile').onchange=async e=>{const file=e.target.files[0];if(!file)return;try{const data=JSON.parse(await file.text());if(data.schema!=='british-shadow-timing'||data.version!==1||!Array.isArray(data.sentences)||typeof data.transcript!=='string')throw Error('形式が異なります');const parsed=parseSentences(data.transcript);if(parsed.length!==data.sentences.length)throw Error('文数が合いません');parsed.forEach((s,i)=>{const source=data.sentences[i];if(s.text!==source.text||!Array.isArray(source.words)||s.words.length!==source.words.length)throw Error('Transcriptが合いません');s.start=finiteOrNull(source.start);s.end=finiteOrNull(source.end);s.words.forEach((w,j)=>{if(w.text!==source.words[j].text)throw Error('単語が合いません');w.start=finiteOrNull(source.words[j].start);w.end=finiteOrNull(source.words[j].end)})});stopSegment();state.sentences=parsed;state.index=0;state.wordIndex=0;$('transcript').value=data.transcript;renderSentence();status('sourceStatus',`${parsed.length}文の時刻データを読み込みました。`)}catch(err){status('sourceStatus',`読み込めませんでした: ${err.message}`,true)}e.target.value=''};
+  function finiteOrNull(v){return typeof v==='number'&&Number.isFinite(v)&&v>=0?v:null}
+  async function startRecording(){if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder){status('recordStatus','このブラウザーでは録音を利用できません。',true);return}try{const stream=await navigator.mediaDevices.getUserMedia({audio:true});state.stream=stream;const type=['audio/webm;codecs=opus','audio/mp4','audio/webm'].find(t=>MediaRecorder.isTypeSupported(t));const recorder=new MediaRecorder(stream,type?{mimeType:type}:undefined);state.recorder=recorder;state.chunks=[];const index=state.index;recorder.ondataavailable=e=>{if(e.data.size)state.chunks.push(e.data)};recorder.onstop=()=>{const blob=new Blob(state.chunks,{type:recorder.mimeType||'audio/webm'});if(blob.size){const old=state.recordings.get(index);if(old)URL.revokeObjectURL(old.url);const ext=blob.type.includes('mp4')?'mp4':'webm';state.recordings.set(index,{url:URL.createObjectURL(blob),ext});if(state.index===index)renderRecording();status('recordStatus',`Sentence ${index+1} の録音を保存しました。`)}stream.getTracks().forEach(t=>t.stop());state.stream=null;state.recorder=null;renderControls()};recorder.start();status('recordStatus',`Sentence ${index+1} を録音中…`);renderControls()}catch(err){state.stream?.getTracks().forEach(t=>t.stop());state.stream=null;state.recorder=null;status('recordStatus','マイクを使えませんでした。ブラウザーの許可を確認してください。',true);renderControls()}}
+  function stopRecording(){if(state.recorder?.state==='recording')state.recorder.stop()}
+  $('record').onclick=startRecording;$('recordStop').onclick=stopRecording;
+  renderSentence();
+})();
 </script>
-</body></html>
+</body>
+</html>
